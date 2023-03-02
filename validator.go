@@ -151,7 +151,7 @@ func (validator Validator) MinLength(min int) Validator {
 
 	if validator.valueType.Kind() == reflect.String {
 		valueLength := validator.reflectValue.Len()
-		if valueLength > min {
+		if valueLength < min {
 			validator.errorMessages = append(validator.errorMessages, fmt.Sprintf(
 				"The length of %v must be at least %v characters. You entered %v characters.",
 				validator.name, min, valueLength,

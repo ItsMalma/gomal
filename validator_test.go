@@ -321,3 +321,44 @@ func TestEqual(t *testing.T) {
 		})
 	}
 }
+
+func TestMinLength(t *testing.T) {
+	tests := []struct {
+		name       string
+		nameField  string
+		valueField string
+		min        int
+		results    []gomal.ValidationResult
+	}{
+		{
+			name:       "minimum 0",
+			nameField:  "x",
+			valueField: "Hello World",
+			min:        0,
+			results:    []gomal.ValidationResult{},
+		},
+		{
+			name:       "minimum 1 but failed",
+			nameField:  "x",
+			valueField: "",
+			min:        1,
+			results:    []gomal.ValidationResult{{Name: "x", Messages: []string{"The length of x must be at least 1 characters. You entered 0 characters."}}},
+		},
+		{
+			name:       "minimum 1 but pass",
+			nameField:  "x",
+			valueField: "H",
+			min:        1,
+			results:    []gomal.ValidationResult{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(tt *testing.T) {
+			results := gomal.Validate(gomal.If(test.nameField, test.valueField).MinLength(test.min))
+			if !reflect.DeepEqual(results, test.results) {
+				tt.Fatalf("expected %#v but got %#v instead", test.results, results)
+			}
+		})
+	}
+}

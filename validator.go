@@ -373,6 +373,21 @@ func (validator Validator) Between(min, max any) Validator {
 	return validator
 }
 
+// Unwrap if value is pointer
+func (validator Validator) Unwrap() Validator {
+	if validator.stop {
+		return validator
+	}
+
+	if validator.reflectValue.Kind() == reflect.Pointer {
+		validator.value = validator.reflectValue.Elem().Interface()
+		validator.reflectValue = validator.reflectValue.Elem()
+		validator.valueType = validator.reflectValue.Type()
+	}
+
+	return validator
+}
+
 func (validator Validator) When(condition bool) Validator {
 	if !condition {
 		validator.stop = true

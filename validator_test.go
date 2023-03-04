@@ -362,3 +362,21 @@ func TestMinLength(t *testing.T) {
 		})
 	}
 }
+
+func TestUnwrap(t *testing.T) {
+	var unwrap string = "hello world"
+	var x *string = &unwrap
+
+	if results := gomal.Validate(gomal.If("x", x).When(x != nil).Unwrap().Equal("hello world")); !reflect.DeepEqual(results, []gomal.ValidationResult{}) {
+		t.Fatalf("expected empty but got %v instead", results)
+	}
+
+	if results := gomal.Validate(gomal.If("x", x).When(x != nil).Unwrap().Equal("hello")); !reflect.DeepEqual(results, []gomal.ValidationResult{{Name: "x", Messages: []string{"x should be equal to hello."}}}) {
+		t.Fatalf("expected error but got %v instead", results)
+	}
+
+	var y *string = nil
+	if results := gomal.Validate(gomal.If("y", y).When(y != nil).Unwrap().Equal("hello world")); !reflect.DeepEqual(results, []gomal.ValidationResult{}) {
+		t.Fatalf("expected empty but got %v instead", results)
+	}
+}
